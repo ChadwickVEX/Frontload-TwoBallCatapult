@@ -1,4 +1,5 @@
 #include "main.h"
+#include "config.hpp"
 
 namespace catapult {
 
@@ -10,7 +11,7 @@ namespace catapult {
     okapi::ControllerButton btnFLD(okapi::ControllerDigital::L2, false);
     okapi::ControllerButton btnPadUp(okapi::ControllerDigital::up, false);
     okapi::ControllerButton btnPadRight(okapi::ControllerDigital::right, false);
-    okapi::ADIButton catapultLimit('H');
+    okapi::ADIButton catapultLimit(CATAPULT_LIM);
 
     tCatapultState lastState = shooting;
     tCatapultState currState = lowering;
