@@ -7,7 +7,7 @@ ChassisControllerIntegrated chassis = ChassisControllerFactory::create( // chass
     {LEFT_BACK, LEFT_FRONT},
     {-RIGHT_BACK, -RIGHT_FRONT},
     AbstractMotor::gearset::green,
-    {4.125_in, 14_in}
+    {4.125_in, 11.55_in}
 );
 
 // use for straight drives to correct for anomalies better than motion profiles will
