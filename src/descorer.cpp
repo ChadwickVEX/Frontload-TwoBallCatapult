@@ -39,15 +39,15 @@ namespace descorer {
                 break;
             case 3:
                 maxVel = 200;
-                absoluteTarget = 360_deg; // full send
+                absoluteTarget = 370_deg; // full send
                 break;
             case 4: // most useful case
                 maxVel = 200;
-                absoluteTarget = 400_deg;
+                absoluteTarget = 410_deg;
             default:
                 maxVel = 200;
                 toggleCount = 1; // default to down
-                absoluteTarget = 45_deg;
+                absoluteTarget = 90_deg;
                 break;
         }
     }

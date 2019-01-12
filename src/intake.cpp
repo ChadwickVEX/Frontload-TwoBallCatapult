@@ -1,7 +1,7 @@
 #include "main.h"
 
 namespace intake {
-    okapi::Motor intake(INTAKE);
+    okapi::Motor intake(INTAKE, true, okapi::AbstractMotor::gearset::green);
 
     okapi::ControllerButton intakeOut(okapi::ControllerDigital::R1, false);
     okapi::ControllerButton intakeIn(okapi::ControllerDigital::R2, false);
