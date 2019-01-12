@@ -20,8 +20,8 @@ const int DESCORER = 3;
 const double DESCORER_RATIO = 1.0; 
 
 const char CATAPULT_LIM = 'H';
-const std::vector<char> RIGHT_ENC = {'A', 'B'};
-const std::vector<char> LEFT_ENC = {'C', 'D'};
+const std::vector<char> LEFT_ENC = {'A', 'B'};
+const std::vector<char> RIGHT_ENC = {'C', 'D'};
 
 extern ChassisControllerIntegrated chassis;
 
