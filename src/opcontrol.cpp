@@ -53,6 +53,6 @@ void opcontrol() {
 
 		// TODO: Add if robot is disabled then set brakemode to coast so it's easy to move
 		
-		pros::delay(20);
+		pros::delay(10);
 	}
 }

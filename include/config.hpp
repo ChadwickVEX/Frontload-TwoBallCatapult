@@ -7,17 +7,17 @@
 
 using namespace okapi;
 
-const int RIGHT_BACK = 19;
-const int LEFT_BACK = 20;
-const int LEFT_FRONT = 17; // 6 and 8 r dead question mark
-const int RIGHT_FRONT = 18;
+const int RIGHT_BACK = 2;
+const int LEFT_BACK = 1;
+const int LEFT_FRONT = 19; // 6 and 8 r dead question mark
+const int RIGHT_FRONT = 20;
 
-const int CATAPULT_1 = 14; // left
-const int CATAPULT_2 = 5; // right
-const int INTAKE = 7;
-const int DESCORER = 10;
+const int CATAPULT_1 = 9; // left
+const int CATAPULT_2 = 18; // right from the front
+const int INTAKE = 10;
+const int DESCORER = 3;
 
-const double DESCORER_RATIO = 5.0; 
+const double DESCORER_RATIO = 1.0; 
 
 const char CATAPULT_LIM = 'H';
 const std::vector<char> RIGHT_ENC = {'A', 'B'};

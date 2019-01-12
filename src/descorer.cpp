@@ -1,6 +1,6 @@
 #include "main.h"
 namespace descorer {
-    okapi::Motor descorer(DESCORER);
+    okapi::Motor descorer(DESCORER, true, okapi::AbstractMotor::gearset::red);
     double ratio = DESCORER_RATIO;
     int maxVel = 200;
 
@@ -21,7 +21,7 @@ namespace descorer {
 
     void changeState() {
         if (btnLUF.changedToPressed()) {
-            toggleCount = (toggleCount <= 3) ? (toggleCount + 1) : 1; // count up 1 2 3, 1 2 3
+            toggleCount = (toggleCount <= 4) ? (toggleCount + 1) : 1; // count up 1 2 3, 1 2 3
         }
 
         if (btnD.changedToPressed()) {
@@ -31,24 +31,30 @@ namespace descorer {
         switch(toggleCount) {
             case 1:
                 maxVel = 200;
-                absoluteTarget = 0_deg; // down
+                absoluteTarget = 45_deg; // down
                 break;
             case 2:
-                maxVel = 100;
-                absoluteTarget = 60_deg; // a little bit up to flip flags and lift caps while driving
+                maxVel = 200;
+                absoluteTarget = 104_deg; // a little bit up to flip flags and lift caps while driving
                 break;
             case 3:
                 maxVel = 200;
-                absoluteTarget = 150_deg; // full send
+                absoluteTarget = 174_deg; // full send
                 break;
+            case 4: // most useful case
+                maxVel = 200;
+                absoluteTarget = 197_deg;
             default:
                 maxVel = 200;
                 toggleCount = 1; // default to down
-                absoluteTarget = 0_deg;
+                absoluteTarget = 45_deg;
                 break;
         }
     }
 
+    // 352 to get balls off cap
+    // 150 to prep
+    // 240 to flippo flaggo
     void moveTarget(int target) {
         descorer.moveAbsolute(target, 200);
     }
@@ -58,7 +64,7 @@ namespace descorer {
     }
 
     void waitUntilSettled() {
-        while (abs(descorer.getActualVelocity()) > 15) {
+        while (abs(descorer.getActualVelocity()) > 15 && abs(descorer.getTargetPosition() - descorer.getPosition()) > 10) {
             pros::delay(20);
         }
     }
