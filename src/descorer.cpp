@@ -21,7 +21,7 @@ namespace descorer {
 
     void changeState() {
         if (btnLUF.changedToPressed()) {
-            toggleCount = (toggleCount <= 4) ? (toggleCount + 1) : 1; // count up 1 2 3, 1 2 3
+            toggleCount = (toggleCount <= 5) ? (toggleCount + 1) : 1; // count up 1 2 3 4, 1 2 3 4
         }
 
         if (btnD.changedToPressed()) {
@@ -31,19 +31,19 @@ namespace descorer {
         switch(toggleCount) {
             case 1:
                 maxVel = 200;
-                absoluteTarget = 45_deg; // down
+                absoluteTarget = 90_deg; // down
                 break;
             case 2:
                 maxVel = 200;
-                absoluteTarget = 104_deg; // a little bit up to flip flags and lift caps while driving
+                absoluteTarget = 208_deg; // a little bit up to flip flags and lift caps while driving
                 break;
             case 3:
                 maxVel = 200;
-                absoluteTarget = 174_deg; // full send
+                absoluteTarget = 360_deg; // full send
                 break;
             case 4: // most useful case
                 maxVel = 200;
-                absoluteTarget = 197_deg;
+                absoluteTarget = 400_deg;
             default:
                 maxVel = 200;
                 toggleCount = 1; // default to down
