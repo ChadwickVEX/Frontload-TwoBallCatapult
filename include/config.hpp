@@ -9,11 +9,11 @@ using namespace okapi;
 
 const int RIGHT_BACK = 3;
 const int LEFT_BACK = 2;
-const int LEFT_FRONT = 19; // 6 and 8 r dead question mark
-const int RIGHT_FRONT = 20;
+const int LEFT_FRONT = 18; // 6 and 8 r dead question mark
+const int RIGHT_FRONT = 19;
 
 const int CATAPULT_1 = 9; // left
-const int CATAPULT_2 = 18; // right from the front
+const int CATAPULT_2 = 17; // right from the front
 const int INTAKE = 10;
 const int DESCORER = 4;
 
