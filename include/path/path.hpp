@@ -33,5 +33,7 @@ namespace path {
          * Get the nearest point to input on the path via seraching them all
          */
         double computeSmallestDistance(double x, double y);
+
+        int getResolution();
     };
 }

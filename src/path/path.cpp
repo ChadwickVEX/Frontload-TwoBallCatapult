@@ -24,4 +24,8 @@ namespace path {
 
         return distanceLeast;
     }
+
+    int Path::getResolution() {
+        return resolution;
+    }
 }
