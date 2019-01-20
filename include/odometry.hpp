@@ -1,15 +1,16 @@
-#if !defined(_ODOMETRY_HPP_)
-#define _ODOMETRY_HPP_
+#pragma once
 
+#include "api.h"
 #include "okapi/api.hpp"
 #include <tuple>
+#include "config.hpp"
 
 namespace odometry {
     using namespace okapi;
 
-    QLength currX;
-    QLength currY;
-    QAngle currAngle;
+    extern QLength currX;
+    extern QLength currY;
+    extern QAngle currAngle;
 
     void init();
 
@@ -22,5 +23,3 @@ namespace odometry {
 
     void run(void *p);
 }
-
-#endif // _ODOMETRY_HPP_

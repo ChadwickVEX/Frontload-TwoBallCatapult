@@ -50,7 +50,9 @@
 #include "pid.hpp"
 #include "drive.hpp"
 #include "graph.hpp"
+#include "odometry.hpp"
 #include "visioncontrol.hpp"
+#include "adaptivepurepursuit.hpp"
 
 /**
  * auto includes

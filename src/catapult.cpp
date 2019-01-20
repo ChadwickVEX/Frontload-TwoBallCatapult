@@ -1,5 +1,6 @@
 #include "main.h"
 #include "config.hpp"
+#include "descorer.hpp"
 
 namespace catapult {
 
@@ -120,6 +121,7 @@ namespace catapult {
                     isLowered = false;
                     catapult.setBrakeMode(AbstractMotor::brakeMode::coast);
                     catapult.moveVoltage(12000);
+                    descorer::changeState(2);
                     break;
                 case movingBall:
                     if (lastState == lowering && isLowered) {

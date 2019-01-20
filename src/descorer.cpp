@@ -1,5 +1,8 @@
 #include "main.h"
 namespace descorer {
+
+    okapi::Logger *log = okapi::Logger::instance();
+
     okapi::Motor descorer(DESCORER, true, okapi::AbstractMotor::gearset::red);
     double ratio = DESCORER_RATIO;
     int maxVel = 200;
@@ -8,6 +11,11 @@ namespace descorer {
     okapi::QAngle absoluteTarget(0_deg);
 
     void init() {
+        descorer.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+        descorer.tarePosition();
+    }
+
+    void compInit() {
         descorer.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
         descorer.tarePosition();
     }
@@ -21,7 +29,7 @@ namespace descorer {
 
     void changeState() {
         if (btnLUF.changedToPressed()) {
-            toggleCount = (toggleCount <= 5) ? (toggleCount + 1) : 1; // count up 1 2 3 4, 1 2 3 4
+            toggleCount = (toggleCount < 4) ? (toggleCount + 1) : 1; // count up 1 2 3 4, 1 2 3 4
         }
 
         if (btnD.changedToPressed()) {
@@ -34,22 +42,23 @@ namespace descorer {
                 absoluteTarget = 90_deg; // down
                 break;
             case 2:
-                maxVel = 200;
-                absoluteTarget = 208_deg; // a little bit up to flip flags and lift caps while driving
+                maxVel = 100;
+                absoluteTarget = 210_deg; // a little bit up to flip flags and lift caps while driving
                 break;
             case 3:
-                maxVel = 200;
-                absoluteTarget = 370_deg; // full send
+                maxVel = 100;
+                absoluteTarget = 400_deg; // full send (370)
                 break;
             case 4: // most useful case
-                maxVel = 200;
-                absoluteTarget = 410_deg;
+                maxVel = 100;
+                absoluteTarget = 425_deg;
             default:
                 maxVel = 200;
                 toggleCount = 1; // default to down
                 absoluteTarget = 90_deg;
                 break;
         }
+        log->info("Flipper Target: " + std::to_string(absoluteTarget.convert(degree)) + ", " + "toggleCount: " + std::to_string(toggleCount));
     }
 
     // 352 to get balls off cap
@@ -61,6 +70,10 @@ namespace descorer {
 
     void moveTarget(int target, int speed) {
         descorer.moveAbsolute(target, speed);
+    }
+
+    void changeState(int count) {
+        toggleCount = count;
     }
 
     void waitUntilSettled() {

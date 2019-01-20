@@ -97,63 +97,53 @@ void blueFarPaths() {
         {
             Point{0_in, 0_in, 0_deg},
             /*Point{44_in, -22_in, 0_deg},*/
-            Point{30_in, -31_in, 0_deg}
+            Point{40_in, 0_ft, 0_deg}
         },
-        "RdriveToCap 1 Blue"
+        "driveToCap 1 Blue"
     );
 }
 
 void blueFarAuto() {
-    motionProfile.reverse();
-    motionProfile.setTarget("RdriveToCap 1 Blue");
+    intake::forwardSpin();
+    motionProfile.setTarget("driveToCap 1 Blue");
     motionProfile.generatePath(
         {
             Point{0_in, 0_in, 0_deg},
             /*Point{44_in, -22_in, 0_deg},*/
-            Point{29_in, 32_in, 0_deg}
+            Point{0.2_ft, 0_in, 0_deg}
         },
-        "drive to pole"
+        "Rdrive away"
     );
     motionProfile.waitUntilSettled();
-    motionProfile.removePath("RdriveToCap 1 Blue");
-    motionProfile.forward();
-    chassis.setMaxVelocity(25);
-    chassis.moveDistanceAsync(-0.5_ft);
-    pros::delay(700);
-    descorer::moveTarget(60 * 5, 60);
-    pros::delay(300);
-    chassis.waitUntilSettled();
-    chassis.setMaxVelocity(80);
-    motionProfile.setTarget("drive to pole");
+    motionProfile.reverse();
+    motionProfile.setTarget("Rdrive away");
     motionProfile.waitUntilSettled();
-    motionProfile.removePath("drive to pole");
-    //chassis.moveDistance(1_ft);
-    chassis.turnAngle(92_deg);
-    chassis.setMaxVelocity(65);
-    descorer::moveTarget(155 * 5, 180);
-    chassis.moveDistance(10_in);
-    pros::delay(400);
-    descorer::waitUntilSettled();
-    chassis.setMaxVelocity(75);
-    descorer::moveTarget(0);
-    chassis.moveDistance(-1.3_ft);
-    chassis.turnAngle(-35_deg);
-    chassis.moveDistance(1.1_ft);
-    catapult::changeState(catapult::shooting);
-    pros::delay(1000);
-    catapult::changeState(catapult::lowering);
+    chassis.setMaxVelocity(130);
+    chassis.turnAngleAsync(90);
+    chassis.waitUntilSettled();
+    intake::stop();
+    chassis.setMaxVelocity(200);
+    chassis.moveDistance(4.5_ft);
 }
 
 void blueFarAutoParkOnly() {
     intake::forwardSpin();
-    catapult::changeState(catapult::lowering);
-    motionProfile.setTarget("BlueClose1");
+    motionProfile.setTarget("driveToCap 1 Blue");
+    motionProfile.generatePath(
+        {
+            Point{0_in, 0_in, 0_deg},
+            /*Point{44_in, -22_in, 0_deg},*/
+            Point{1_ft, 10_in, 0_deg}
+        },
+        "Rdrive away"
+    );
     motionProfile.waitUntilSettled();
-    chassis.moveDistance(-0.75_ft);
+    motionProfile.reverse();
+    motionProfile.setTarget("RDrive away");
     chassis.setMaxVelocity(130);
-    chassis.turnAngle(90_deg);
+    chassis.turnAngle(90);
     chassis.setMaxVelocity(200);
-    chassis.moveDistance(3.8_ft);
+    chassis.moveDistance(4.5_ft);
 }
 
 //redclose
@@ -256,15 +246,24 @@ void redCloseAuto() {
 //redfar
 void redFarPaths() {
     motionProfile.removePath("BlueClose1");
-    motionProfile.removePath("RdriveToCap 1 Blue");
     motionProfile.generatePath(
         {
             Point{0_in, 0_in, 0_deg},
             /*Point{44_in, -22_in, 0_deg},*/
-            Point{30_in, 31_in, 0_deg}
+            Point{40_in, 0_ft, 0_deg}
         },
-        "RdriveToCap 1 Red"
+        "driveToCap 1 Blue"
     );
+
+    //motionProfile.removePath("RdriveToCap 1 Blue");
+    // motionProfile.generatePath(
+    //     {
+    //         Point{0_in, 0_in, 0_deg},
+    //         /*Point{44_in, -22_in, 0_deg},*/
+    //         Point{30_in, 31_in, 0_deg}
+    //     },
+    //     "RdriveToCap 1 Red"
+    // );
 }
 
 void redFarAuto() {
@@ -311,12 +310,25 @@ void redFarAuto() {
 
 void redFarAutoParkOnly() {
     intake::forwardSpin();
-    catapult::changeState(catapult::lowering);
-    motionProfile.setTarget("BlueClose1");
+    motionProfile.setTarget("driveToCap 1 Blue");
+    motionProfile.generatePath(
+        {
+            Point{0_in, 0_in, 0_deg},
+            /*Point{44_in, -22_in, 0_deg},*/
+            Point{0.2_ft, 0_in, 0_deg}
+        },
+        "Rdrive away"
+    );
     motionProfile.waitUntilSettled();
-    chassis.moveDistance(-0.75_ft);
+    pros::delay(300);
+    motionProfile.reverse();
+    motionProfile.setTarget("Rdrive away");
+    motionProfile.waitUntilSettled();
     chassis.setMaxVelocity(130);
-    chassis.turnAngle(-90_deg);
+    chassis.turnAngleAsync(-200);
+    chassis.waitUntilSettled();
+    intake::stop();
     chassis.setMaxVelocity(200);
     chassis.moveDistance(3.8_ft);
+
 }

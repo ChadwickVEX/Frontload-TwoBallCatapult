@@ -142,7 +142,7 @@ namespace lcd {
                 logger->debug("Running Red Close");
                 break;
             case eredFar:
-                redFarAuto();
+                redFarAutoParkOnly();
                 logger->debug("Running Red Far");
                 break;
             case eNone:

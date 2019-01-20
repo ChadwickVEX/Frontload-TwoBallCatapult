@@ -15,6 +15,8 @@ void redClosePaths();
 
 void redFarAuto();
 
+void redFarAutoParkOnly();
+
 void redFarPaths();
 
 #endif
