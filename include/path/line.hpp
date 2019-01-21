@@ -9,7 +9,7 @@ namespace path {
         Point end;
         
         public:
-        Line(Point start, Point end, int resolution);
+        Line(Point start, Point end, int resolution = 100, int lookahead = -1);
         Point pointAt(int t);
     };
 }

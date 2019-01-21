@@ -7,22 +7,29 @@ namespace path {
     struct Point {
         okapi::QLength x;
         okapi::QLength y;
+        int t = 0;
+    };
+
+    struct PointAndDistance {
+        Point point;
+        okapi::QLength distance;
     };
 
     class Path {
         private:
         int currT;
-
+        int lookAhead;
+        
         protected:
         int resolution;
 
         public:
-        Path(int resolution);
+        Path(int resolution, int lookahead = -1);
         
         /**
          * Get next point on path
          */
-        Point nextPoint();
+        Point nextPoint(int lookahead);
 
         /**
          * Get Point at parametric T
@@ -32,8 +39,11 @@ namespace path {
         /**
          * Get the nearest point to input on the path via seraching them all
          */
-        double computeSmallestDistance(double x, double y);
+        PointAndDistance getClosestPointAndDistance(Point inputPoint);
 
         int getResolution();
+        int getT();
+        void setT(int t);
+        int getLookahead();
     };
 }

@@ -9,18 +9,23 @@ namespace pathfollowing {
         private:
         std::unique_ptr<okapi::IterativePosPIDController> straightController;
         std::unique_ptr<okapi::IterativePosPIDController> turnController;
+        int mainLookahead;
         int lookahead;
         double lookaheadKf;
         path::Path *path;
+        path::Point target;
+        okapi::QLength nextPointdistance;
 
         public:
         AdaptivePurePursuit(
             std::unique_ptr<okapi::IterativePosPIDController> straight,
             std::unique_ptr<okapi::IterativePosPIDController> turn,
-            int lookahead, double lookaheadKf
+            int lookahead, double lookaheadKf, okapi::QLength nextPointDistance
         );
 
         void setPath(path::Path *path);
+
+        void setLookahead(int lookahead);
 
         void loop();
     };
