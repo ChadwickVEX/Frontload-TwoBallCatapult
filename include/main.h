@@ -52,6 +52,9 @@
 #include "graph.hpp"
 #include "odometry.hpp"
 #include "visioncontrol.hpp"
+#include "path/path.hpp"
+#include "path/line.hpp"
+#include "path/pathgroup.hpp"
 #include "adaptivepurepursuit.hpp"
 
 /**
