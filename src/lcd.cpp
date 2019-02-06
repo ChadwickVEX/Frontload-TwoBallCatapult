@@ -1,4 +1,5 @@
 #include "main.h"
+#include "odometry.hpp"
 
 namespace lcd {
     lv_obj_t *blue_close;
@@ -54,6 +55,23 @@ namespace lcd {
         selectAutonLog();
     }
 
+    void updateData(void* p) {
+        lv_obj_t* position = lv_label_create(lv_scr_act(), NULL);
+        lv_label_set_text(position, "X: Y: ");
+        lv_obj_align(position, lv_scr_act(), LV_ALIGN_IN_TOP_MID, 0, 30);
+
+        lv_obj_t* angle = lv_label_create(lv_scr_act(), NULL);
+        lv_label_set_text(angle, "Angle: ");
+
+        while (true) {
+            std::string positionString = "X: " + std::to_string(odometry::currX.convert(inch)) + "Y: " + std::to_string(odometry::currY.convert(inch));
+            lv_label_set_text(position, positionString.c_str());
+            std::string angleString = "Angle: " + std::to_string(odometry::currAngle.convert(degree));
+            lv_label_set_text(angle, angleString.c_str());
+            pros::delay(20);
+        }
+    }
+
     void generatePaths(void* param) {
         while (true) {
             if (!isSelected) {
@@ -80,7 +98,9 @@ namespace lcd {
             }
             pros::delay(20);
 
-            if (pros::competition::is_autonomous() && !pros::competition::is_disabled()) {
+            if (pros::competition::is_autonomous() || !pros::competition::is_disabled()) { // changed from && to || untested
+                lv_obj_clean(lv_scr_act());
+                pros::Task dataTask(updateData, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Position Data");
                 pros::c::task_delete(NULL);
             }
         }

@@ -2,48 +2,50 @@
 
 #include "okapi/api/units/QLength.hpp"
 
-namespace path {  
- 
-    struct Point {
-        okapi::QLength x;
-        okapi::QLength y;
-        int t = 0;
-    };
+namespace path
+{
 
-    struct PointAndDistance {
-        Point point;
-        okapi::QLength distance;
-    };
+struct Point
+{
+    okapi::QLength x;
+    okapi::QLength y;
+    int t = 0;
+};
 
-    class Path {
-        private:
-        int currT;
-        int lookAhead;
-        
-        protected:
-        int resolution;
+struct PointAndDistance
+{
+    Point point;
+    okapi::QLength distance;
+};
 
-        public:
-        Path(int resolution, int lookahead = -1);
-        
-        /**
+class Path
+{
+  protected:
+    int currT;
+    int resolution;
+    int lookAhead;
+
+  public:
+    Path(int resolution, int lookahead = -1);
+
+    /**
          * Get next point on path
          */
-        Point nextPoint(int lookahead);
+    Point nextPoint(int lookahead);
 
-        /**
+    /**
          * Get Point at parametric T
          */
-        virtual Point pointAt(int T);
-        
-        /**
+    virtual Point pointAt(int T) = 0;
+
+    /**
          * Get the nearest point to input on the path via seraching them all
          */
-        PointAndDistance getClosestPointAndDistance(Point inputPoint);
+    PointAndDistance getClosestPointAndDistance(Point inputPoint);
 
-        int getResolution();
-        int getT();
-        void setT(int t);
-        int getLookahead();
-    };
-}
+    int getResolution();
+    int getT();
+    void setT(int t);
+    int getLookahead();
+};
+} // namespace path

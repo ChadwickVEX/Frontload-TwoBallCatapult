@@ -2,15 +2,18 @@
 
 #include "path.hpp"
 #include <vector>
+#include <functional>
 
-namespace path {
-    class PathGroup : public Path {
-        private:
-        std::vector<Path> paths;
-        
-        public:
-        PathGroup(std::initializer_list<Path> list, int resolution, int lookahead = -1);
+namespace path
+{
+class PathGroup : public Path
+{
+  private:
+    std::vector<std::reference_wrapper<Path>> paths;
 
-        Point pointAt(int t);
-    };
-}
+  public:
+    PathGroup(std::initializer_list<std::reference_wrapper<Path>> list, int resolution, int lookahead = -1);
+
+    Point pointAt(int t) override;
+};
+} // namespace path

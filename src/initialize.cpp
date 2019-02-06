@@ -32,8 +32,8 @@ void initialize() {
 	odometry::init();
 
 	pros::Task catapultTask(catapult::move, (void*)1, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Catapult Move");
-	pros::Task pathTask(lcd::generatePaths, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Path Generation");
 	pros::Task odometryTask(odometry::run, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Odometry");
+	pros::Task pathTask(lcd::generatePaths, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Path Generation");
 
 	//pros::lcd::initialize();
 
@@ -67,4 +67,7 @@ void competition_initialize() {
 	// if (pros::competition::is_disabled()) {
 	// 	descorer::compInit();
 	// }
+	odometry::init();
+	catapult::tare();
+	descorer::init();
 }

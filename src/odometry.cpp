@@ -7,7 +7,7 @@ namespace odometry {
     double rEncLast;
     double lEncLast;
 
-    const double CHASSISWIDTH = 5;
+    const double CHASSISWIDTH = 6.42;
     const double TICKSINCH = ENC_WHEEL * PI / 360.0;
 
     QLength currX;
@@ -39,10 +39,10 @@ namespace odometry {
         double rDEnc = rCurrEnc - rEncLast;
         double lDEnc = lCurrEnc - lEncLast;
 
-        double dCenterArc = (rDEnc - lDEnc) / 2.0;
-        dCenterArc *= TICKSINCH;
-        
-        dTheta = (lDEnc - rDEnc) / CHASSISWIDTH * PI/180.0;
+        double dCenterArc = (rDEnc + lDEnc) / 2.0;
+        // dCenterArc *= TICKSINCH;
+
+        dTheta = (lDEnc - rDEnc) / CHASSISWIDTH /** PI / 180.0*/;
 
         double radius = (dTheta == 0) ? 0 : dCenterArc / dTheta;
         dX = dTheta == 0 ? 0 : (radius - radius * cos(dTheta));
@@ -51,10 +51,19 @@ namespace odometry {
         currX = (dX * cos(currAngle.convert(radian)) + dY * sin(currAngle.convert(radian)) + currX.convert(inch)) * inch;
         currY = (dY * cos(currAngle.convert(radian)) - dX * sin(currAngle.convert(radian)) + currY.convert(inch)) * inch;
 
-        currAngle = ((dTheta * 180.0 / PI) + currAngle.convert(degree)) * degree;
+        QAngle tempCurrAngle = ((dTheta * 180.0 / PI) + currAngle.convert(degree)) * degree;
 
         rEncLast = rCurrEnc;
-        lEncLast = lCurrEnc;        
+        lEncLast = lCurrEnc;
+
+        while (tempCurrAngle.convert(degree) >= 360.0) {
+            tempCurrAngle = (tempCurrAngle.convert(degree) - 360.0) * degree;
+        }
+        while (tempCurrAngle.convert(degree) < 0.0) {
+            tempCurrAngle = (tempCurrAngle.convert(degree) + 360.0) * degree;
+        }
+
+        currAngle = tempCurrAngle;
     }
 
     QLength distanceToPoint(QLength x, QLength y) {}
@@ -73,9 +82,13 @@ namespace odometry {
         while (true) {
             double x = currX.convert(okapi::foot);
             double y = currY.convert(okapi::foot);
+            double left = leftEnc.get();
+            double right = rightEnc.get();
             controller.print(0, 0, "X: %.2f", x);
+            //controller.print(0, 0, "L: %.2f", left);
             pros::delay(51);
             controller.print(1, 0, "Y: %.2f", y);
+            //controller.print(1, 0, "R: %.2f", right);
             pros::delay(51);
         }
     }
