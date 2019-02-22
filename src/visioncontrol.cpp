@@ -49,9 +49,9 @@ namespace visionControl {
     void action() { // remember to make this not fight opcontrol controller
         double speed = 0;
         pros::vision_object_s_t flagObj;
-        log->debug("Angle to Blue Flag: " + std::to_string(vision.get_by_code(0, ccBlueFlag).angle));
-        log->debug("Angle to Red Flag: " + std::to_string(vision.get_by_code(0, ccRedFlag).angle));
-        log->debug("X Position of Green Thing: " + std::to_string(vision.get_by_sig(0, 3).x_middle_coord));
+        //log->debug("Angle to Blue Flag: " + std::to_string(vision.get_by_code(0, ccBlueFlag).angle));
+        //log->debug("Angle to Red Flag: " + std::to_string(vision.get_by_code(0, ccRedFlag).angle));
+        //log->debug("X Position of Green Thing: " + std::to_string(vision.get_by_sig(0, 3).x_middle_coord));
     
         switch (currState) {
             case notTargeting:

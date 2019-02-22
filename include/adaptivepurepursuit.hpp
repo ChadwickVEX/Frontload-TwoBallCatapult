@@ -31,6 +31,8 @@ public:
 
   void loop();
 
-  okapi::QAngle getAngleTarget();
+  path::Point getPointTarget();
+
+  bool isSettled();
 };
 } // namespace pathfollowing

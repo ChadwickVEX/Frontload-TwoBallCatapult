@@ -17,7 +17,8 @@ void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	setAllMotorsBrakeMode(AbstractMotor::brakeMode::brake);
 	const double threshold = 5.0;
-	okapi::Logger *log = okapi::Logger::instance();
+	//okapi::Logger *log = okapi::Logger::instance();
+	catapult::changeState(catapult::lowering);
 
 	visionControl::init();
 

@@ -135,12 +135,6 @@ namespace lcd {
         lv_label_set_text(redFarLabel, "Red Far");
         lv_cont_set_fit(red_far, true, true);
 
-        okapi::Logger::initialize(
-            okapi::TimeUtilFactory::create().getTimer(),
-            "/ser/sout", // output to the PROS terminal over standard out
-            okapi::Logger::LogLevel::debug // most verbose log level
-        );
-
         lv_btn_set_action(blue_close, LV_BTN_ACTION_PR, selectBlueClose);
         lv_btn_set_action(red_close, LV_BTN_ACTION_PR, selectRedClose);
         lv_btn_set_action(blue_far, LV_BTN_ACTION_PR, selectBlueFar);

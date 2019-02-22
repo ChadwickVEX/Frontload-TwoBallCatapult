@@ -29,7 +29,8 @@ namespace descorer {
 
     void changeState() {
         if (btnLUF.changedToPressed()) {
-            toggleCount = (toggleCount < 4) ? (toggleCount + 1) : 1; // count up 1 2 3 4, 1 2 3 4
+            toggleCount = (toggleCount < 5) ? (toggleCount + 1) : 1; // count up 1 2 3 4, 1 2 3 4
+            //if (++toggleCount >= 5) toggleCount = 1;
         }
 
         if (btnD.changedToPressed()) {
@@ -39,26 +40,29 @@ namespace descorer {
         switch(toggleCount) {
             case 1:
                 maxVel = 200;
-                absoluteTarget = 90_deg; // down
+                absoluteTarget = 50_deg; // down
                 break;
             case 2:
                 maxVel = 100;
-                absoluteTarget = 210_deg; // a little bit up to flip flags and lift caps while driving
+                absoluteTarget = 120_deg; // a little bit up to flip flags and lift caps while driving
                 break;
             case 3:
                 maxVel = 100;
-                absoluteTarget = 400_deg; // full send (370)
+                absoluteTarget = 210_deg; // full send (370)
                 break;
             case 4: // most useful case
                 maxVel = 100;
-                absoluteTarget = 425_deg;
+                absoluteTarget = 10_deg;
+                break;
             default:
                 maxVel = 200;
                 toggleCount = 1; // default to down
                 absoluteTarget = 90_deg;
                 break;
         }
-        log->info("Flipper Target: " + std::to_string(absoluteTarget.convert(degree)) + ", " + "toggleCount: " + std::to_string(toggleCount));
+        std::string state = std::to_string(toggleCount) + "\n";
+        //printf(state.c_str());
+        //log->info("Flipper Target: " + std::to_string(absoluteTarget.convert(degree)) + ", " + "toggleCount: " + std::to_string(toggleCount));
     }
 
     // 352 to get balls off cap

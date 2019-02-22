@@ -7,6 +7,7 @@ PathGroup::PathGroup(std::initializer_list<std::reference_wrapper<Path>> list, i
 
 Point PathGroup::pointAt(int t)
 {
+    // TODO: Make it optionally max the point at the end of each path so it doesn't get trolled
     int runningSum = 0;
     Point point;
     for (Path &path : paths)

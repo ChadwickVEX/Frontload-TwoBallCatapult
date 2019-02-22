@@ -4,24 +4,30 @@
 
 namespace catapult {
 
-    okapi::Motor catapult1(CATAPULT_1, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-    okapi::Motor catapult2(CATAPULT_2, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
+    okapi::Motor catapult1(CATAPULT_1, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+    okapi::Motor catapult2(CATAPULT_2, false, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 
     okapi::MotorGroup catapult({-CATAPULT_1, CATAPULT_2});
 
     okapi::ControllerButton btnFLD(okapi::ControllerDigital::L2, false);
     okapi::ControllerButton btnPadUp(okapi::ControllerDigital::up, false);
     okapi::ControllerButton btnPadRight(okapi::ControllerDigital::right, false);
-    okapi::ADIButton catapultLimit(CATAPULT_LIM);
+    //okapi::ADIButton catapultLimit(CATAPULT_LIM);
+    pros::ADIAnalogIn catapultLimit(CATAPULT_LIM);
+
+    const int LIMIT_THRESH = 2500;
 
     tCatapultState lastState = shooting;
     tCatapultState currState = lowering;
 
-    okapi::Logger *logger = okapi::Logger::instance();
+    bool isLowered = false;
+
+    //okapi::Logger *logger = okapi::Logger::instance();
 
     void tare() {
         catapult1.tarePosition();
         catapult2.tarePosition();
+        isLowered = false;
     }
 
     /**
@@ -33,14 +39,17 @@ namespace catapult {
     void calibrate() {
         // spin it until you feel resistance and then stop and set 0
         while (catapult1.getCurrentDraw() < SLIP_CURRENT_DRAW /* needs tuning */) {
-            catapult1.moveVelocity(200);
-            catapult2.moveVelocity(200);
+            catapult1.moveVelocity(100);
+            catapult2.moveVelocity(100);
             pros::delay(10);
         }
         tare();
     }
 
     void changeState(tCatapultState state) {
+        if(state == lowering) {
+            isLowered = false;
+        }
         currState = state;
     }
 
@@ -51,6 +60,7 @@ namespace catapult {
         }
         if (btnFLD.changedToReleased()) {
             currState = lowering;
+            isLowered = false;
         }
         if (btnPadUp.changedToPressed()) {
             currState = movingBall;
@@ -96,20 +106,20 @@ namespace catapult {
             catapult1.moveVoltage(12000);
             catapult2.moveVoltage(12000);
         }
-        catapult1.moveRelative(LOAD_TARGET, 200);
-        catapult2.moveRelative(LOAD_TARGET, 200);
+        catapult1.moveRelative(LOAD_TARGET, 100);
+        catapult2.moveRelative(LOAD_TARGET, 100);
     }
 
     void move(void* arg) {
         int shootingRuns = 0;
-        bool isLowered = false;
+        isLowered = false;
 
         while (true) {
             //Logger::initialize(std::make_unique<Timer>(), "/ser/sout", Logger::LogLevel::info);
             switch (currState) {
                 case lowering:
                     catapult.setBrakeMode(AbstractMotor::brakeMode::hold);
-                    if (catapultLimit.isPressed()) {
+                    if (/*catapultLimit.isPressed()*/ catapultLimit.get_value() < LIMIT_THRESH) {
                         catapult.moveVelocity(0);
                         isLowered = true;
                     } else {
@@ -120,26 +130,33 @@ namespace catapult {
                 case shooting:
                     isLowered = false;
                     catapult.setBrakeMode(AbstractMotor::brakeMode::coast);
-                    catapult.moveVoltage(12000);
-                    descorer::changeState(2);
+                    while (catapultLimit.get_value() < LIMIT_THRESH) {
+                        catapult.moveVoltage(12000);
+                        descorer::changeState(2);
+                        pros::delay(10);
+                    }
+                    pros::delay(600);
+                    descorer::changeState(1);
                     break;
                 case movingBall:
-                    if (lastState == lowering && isLowered) {
+                    if (lastState == lowering) {
                         catapult.tarePosition();
                     } else if(!isLowered) {
                         currState = lowering;
                         lastState = movingBall;
                         break;
                     }
-                    catapult.moveVoltage(-6000);
-                    if (abs(catapult.getPosition()) >= (50 * 7)) {
+                    catapult.moveVoltage(-10000);
+                    if (abs(catapult.getPosition()) >= (80 * 7)) {
                         catapult.moveVoltage(8000);
                         currState = lowering;
+                        isLowered = false;
                         lastState = movingBall;
                         break;
                     }
                     break;
                 case unmoving:
+                    isLowered = false;
                     catapult.setBrakeMode(AbstractMotor::brakeMode::coast);
                     catapult.moveVoltage(0);
                     break;
@@ -159,6 +176,10 @@ namespace catapult {
             //     }
             // }
             pros::Task::delay(10);
+            //logger->info("catapult limit: " + std::to_string(catapultLimit.get_value()));
+            //std::string stte = getStateString();
+            //printf(stte.c_str());
+            printf("Catapult Limit: %d", catapultLimit.get_value());
         }
     }
 
@@ -169,15 +190,18 @@ namespace catapult {
     }
 
     void logCurrentDraw() {
-        logger->info("catapult current draw: " + std::to_string(catapult.getCurrentDraw()));
-        logger->info("catapult torque: " + std::to_string(catapult.getTorque()));
+        //logger->info("catapult current draw: " + std::to_string(catapult.getCurrentDraw()));
+        //logger->info("catapult torque: " + std::to_string(catapult.getTorque()));
+        printf("Catapult Current Draw: %d", catapult.getCurrentDraw());
+        printf(", state: %s", getStateString().c_str());
+        printf(", is lowered: %s\n", isLowered ? "true" : "false");
     }
 
     void logAngle() {
-        logger->info("catapult angle: " + std::to_string(catapult.getPosition()));
+        //logger->info("catapult angle: " + std::to_string(catapult.getPosition()));
     }
 
     void logState() {
-        logger->info("catapult state: " + getStateString());
+        //logger->info("catapult state: " + getStateString());
     }
 }

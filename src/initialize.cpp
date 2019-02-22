@@ -17,11 +17,11 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	Logger::initialize(
-		TimeUtilFactory::create().getTimer(),
-		"/ser/sout", // output to the PROS terminal over standard out
-		Logger::LogLevel::debug // most verbose log level
-	);
+	// Logger::initialize(
+	// 	TimeUtilFactory::create().getTimer(),
+	// 	"/ser/sout", // output to the PROS terminal over standard out
+	// 	Logger::LogLevel::off /* // most verbose log level is debug*/
+	// );
 
 	lcd::initButtons();
 
@@ -67,7 +67,8 @@ void competition_initialize() {
 	// if (pros::competition::is_disabled()) {
 	// 	descorer::compInit();
 	// }
-	odometry::init();
-	catapult::tare();
-	descorer::init();
+	//odometry::init();
+	//catapult::tare();
+	//descorer::init();
+	//catapult::changeState(catapult::lowering);
 }
