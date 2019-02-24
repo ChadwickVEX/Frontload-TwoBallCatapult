@@ -1,6 +1,7 @@
 #include "main.h"
 
-PID::PID (double kP, double kI, double kD, int target) {
+PID::PID(double kP, double kI, double kD, int target)
+{
     this->kP = kP;
     this->kI = kI;
     this->kD = kD;
@@ -13,13 +14,14 @@ PID::PID (double kP, double kI, double kD, int target) {
  * Next PID step.
  * Constrained between [-1, 1]
  */
-double PID::next(int reading) {
+double PID::next(int reading)
+{
     dT = pros::millis() - lastTime;
     double speed = 0.0;
 
     lastError = error;
     error = target - reading;
-    double derivative = (double) error / ((double) dT);
+    double derivative = (double)error / ((double)dT);
     double integral = 0;
 
     // todo implement all of pid lul
@@ -37,7 +39,7 @@ double PID::next(int reading) {
     return speed;
 }
 
-void PID::changeTarget(int target) {
+void PID::changeTarget(int target)
+{
     this->target = target;
 }
-

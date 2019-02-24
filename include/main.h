@@ -55,6 +55,7 @@
 #include "path/path.hpp"
 #include "path/line.hpp"
 #include "path/pathgroup.hpp"
+#include "path/bezier.hpp"
 #include "adaptivepurepursuit.hpp"
 
 /**

@@ -34,5 +34,7 @@ public:
   path::Point getPointTarget();
 
   bool isSettled();
+
+  void setKf(double kf);
 };
 } // namespace pathfollowing

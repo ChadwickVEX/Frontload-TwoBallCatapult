@@ -1,103 +1,145 @@
 #include "odometry.hpp"
 
-namespace odometry {
-    ADIEncoder rightEnc(RIGHT_ENC.front(), RIGHT_ENC.back(), false);
-    ADIEncoder leftEnc(LEFT_ENC.front(), LEFT_ENC.back());
+namespace odometry
+{
+ADIEncoder rightEnc(RIGHT_ENC.front(), RIGHT_ENC.back(), false);
+ADIEncoder leftEnc(LEFT_ENC.front(), LEFT_ENC.back());
 
-    double rEncLast;
-    double lEncLast;
+double rEncLast;
+double lEncLast;
 
-    const double CHASSISWIDTH = 6.42;
-    const double TICKSINCH = ENC_WHEEL * PI / 360.0;
+const double CHASSISWIDTH = 6.42;
+const double TICKSINCH = ENC_WHEEL * PI / 360.0;
 
-    QLength currX;
-    QLength currY;
-    QAngle currAngle;
+QLength currX;
+QLength currY;
+QAngle currAngle;
 
-    void init() {
-        currX = 0_ft;
-        currY = 0_ft;   
-        currAngle = 0_deg;
+void init()
+{
+    currX = 0_ft;
+    currY = 0_ft;
+    currAngle = 0_deg;
 
-        rEncLast = rightEnc.get() * TICKSINCH;
-        lEncLast = leftEnc.get() * TICKSINCH;
-    }
+    rEncLast = rightEnc.get() * TICKSINCH;
+    lEncLast = leftEnc.get() * TICKSINCH;
+}
 
-    /**
+/**
      * Iterate
      */
-    void calculate() {
-        using namespace okapi;
+void calculate()
+{
+    using namespace okapi;
 
-        double dX = 0.0;
-        double dY = 0.0;
-        double dTheta = 0.0;
+    double dX = 0.0;
+    double dY = 0.0;
+    double dTheta = 0.0;
 
-        double rCurrEnc = rightEnc.get() * ENC_WHEEL * PI / 360.0;
-        double lCurrEnc = leftEnc.get() * ENC_WHEEL * PI / 360.0;
+    double rCurrEnc = rightEnc.get() * ENC_WHEEL * PI / 360.0;
+    double lCurrEnc = leftEnc.get() * ENC_WHEEL * PI / 360.0;
 
-        double rDEnc = rCurrEnc - rEncLast;
-        double lDEnc = lCurrEnc - lEncLast;
+    double rDEnc = rCurrEnc - rEncLast;
+    double lDEnc = lCurrEnc - lEncLast;
 
-        double dCenterArc = (rDEnc + lDEnc) / 2.0;
-        // dCenterArc *= TICKSINCH;
+    double dCenterArc = (rDEnc + lDEnc) / 2.0;
+    // dCenterArc *= TICKSINCH;
 
-        dTheta = (lDEnc - rDEnc) / CHASSISWIDTH /** PI / 180.0*/;
+    dTheta = (lDEnc - rDEnc) / CHASSISWIDTH /** PI / 180.0*/;
 
-        double radius = (dTheta == 0) ? 0 : dCenterArc / dTheta;
-        dX = dTheta == 0 ? 0 : (radius - radius * cos(dTheta));
-        dY = dTheta == 0 ? dCenterArc : radius * sin(dTheta);
+    double radius = (dTheta == 0) ? 0 : dCenterArc / dTheta;
+    dX = dTheta == 0 ? 0 : (radius - radius * cos(dTheta));
+    dY = dTheta == 0 ? dCenterArc : radius * sin(dTheta);
 
-        currX = (dX * cos(currAngle.convert(radian)) + dY * sin(currAngle.convert(radian)) + currX.convert(inch)) * inch;
-        currY = (dY * cos(currAngle.convert(radian)) - dX * sin(currAngle.convert(radian)) + currY.convert(inch)) * inch;
+    currX = (dX * cos(currAngle.convert(radian)) + dY * sin(currAngle.convert(radian)) + currX.convert(inch)) * inch;
+    currY = (dY * cos(currAngle.convert(radian)) - dX * sin(currAngle.convert(radian)) + currY.convert(inch)) * inch;
 
-        QAngle tempCurrAngle = ((dTheta * 180.0 / PI) + currAngle.convert(degree)) * degree;
+    QAngle tempCurrAngle = ((dTheta * 180.0 / PI) + currAngle.convert(degree)) * degree;
 
-        rEncLast = rCurrEnc;
-        lEncLast = lCurrEnc;
+    rEncLast = rCurrEnc;
+    lEncLast = lCurrEnc;
 
-        while (tempCurrAngle.convert(degree) >= 360.0) {
-            tempCurrAngle = (tempCurrAngle.convert(degree) - 360.0) * degree;
-        }
-        while (tempCurrAngle.convert(degree) < 0.0) {
-            tempCurrAngle = (tempCurrAngle.convert(degree) + 360.0) * degree;
-        }
-
-        currAngle = tempCurrAngle;
+    while (tempCurrAngle.convert(degree) >= 360.0)
+    {
+        tempCurrAngle = (tempCurrAngle.convert(degree) - 360.0) * degree;
+    }
+    while (tempCurrAngle.convert(degree) < 0.0)
+    {
+        tempCurrAngle = (tempCurrAngle.convert(degree) + 360.0) * degree;
     }
 
-    QLength distanceToPoint(QLength x, QLength y) {}
+    currAngle = tempCurrAngle;
+}
 
-    QAngle angleToPoint(QLength x, QLength y) {}
+QLength distanceToPoint(QLength x, QLength y) {}
 
-    std::tuple<QLength, QAngle> distanceAndAngleToPoint(QLength x, QLength y) {
-        return std::tuple<QLength, QAngle>(distanceToPoint(x, y), angleToPoint(x, y));
-    }
+QAngle angleToPoint(QLength x, QLength y) {}
 
-    void printPosition(void* p) {
-        pros::Controller controller(pros::E_CONTROLLER_MASTER);
-        controller.clear();
-        using namespace okapi;
+std::tuple<QLength, QAngle> distanceAndAngleToPoint(QLength x, QLength y)
+{
+    return std::tuple<QLength, QAngle>(distanceToPoint(x, y), angleToPoint(x, y));
+}
 
-        while (true) {
-            double x = currX.convert(okapi::foot);
-            double y = currY.convert(okapi::foot);
-            double left = leftEnc.get();
-            double right = rightEnc.get();
-            controller.print(0, 0, "X: %.2f", x);
-            //controller.print(0, 0, "L: %.2f", left);
-            pros::delay(51);
-            controller.print(1, 0, "Y: %.2f", y);
-            //controller.print(1, 0, "R: %.2f", right);
-            pros::delay(51);
-        }
-    }
+void printPosition(void *p)
+{
+    pros::Controller controller(pros::E_CONTROLLER_MASTER);
+    controller.clear();
+    using namespace okapi;
 
-    void run(void* p) {
-        pros::Task odometryPrint(printPosition, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Position Print --> Controller");
-        while (true) {
-            calculate();
-            pros::delay(51);
-        }
+    while (true)
+    {
+        double x = currX.convert(okapi::foot);
+        double y = currY.convert(okapi::foot);
+        double left = leftEnc.get();
+        double right = rightEnc.get();
+        controller.print(0, 0, "X: %.2f", x);
+        //controller.print(0, 0, "L: %.2f", left);
+        pros::delay(51);
+        controller.print(1, 0, "Y: %.2f", y);
+        //controller.print(1, 0, "R: %.2f", right);
+        pros::delay(51);
     }
 }
+
+void run(void *p)
+{
+    pros::Task odometryPrint(printPosition, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Position Print --> Controller");
+    while (true)
+    {
+        calculate();
+        pros::delay(2);
+    }
+}
+
+void turnAbsolute(QAngle target)
+{
+
+    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(1.0, 0.0, 0.0, 0, std::make_unique<okapi::AverageFilter<5>>());
+
+    double angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
+    angleError = atan2(sin(angleError), cos(angleError));
+    tc.setTarget(angleError);
+    okapi::SettledUtil su = okapi::SettledUtilFactory::create(2, 0.8, 100_ms); // target Error, target derivative, settle time
+
+    while (!su.isSettled(angleError * 180.0 / PI))
+    {
+        tc.setTarget(angleError);
+        double power = tc.step(0);
+        if (abs(power) < 0.01)
+        {
+            chassis.stop();
+        }
+        else
+        {
+            chassis.rotate(power);
+        }
+    }
+
+    chassis.stop();
+}
+
+void turnRelative(QAngle target)
+{
+    turnAbsolute((currAngle.convert(okapi::degree) + target.convert(okapi::degree)) * okapi::degree);
+}
+} // namespace odometry

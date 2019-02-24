@@ -1,5 +1,5 @@
+#include "config.hpp"
 #include "adaptivepurepursuit.hpp"
-// #include "config.hpp"
 #include "drive.hpp"
 
 namespace pathfollowing
@@ -51,7 +51,7 @@ void AdaptivePurePursuit::loop()
 		sqrt(pow(target.x.convert(inch) - robotPosition.x.convert(inch), 2) + pow(target.y.convert(inch) - robotPosition.y.convert(inch), 2));
 
 	straightController->setTarget(distTolookaheadPoint);
- 
+
 	double forwardPower = straightController->step(0);
 	// QAngle bearing =
 	// 	std::atan2((this->target.x.convert(inch) - robotPosition.x.convert(inch)),
@@ -61,7 +61,6 @@ void AdaptivePurePursuit::loop()
 		std::atan2((this->target.x.convert(inch) - robotPosition.x.convert(inch)),
 				   (this->target.y.convert(inch) - robotPosition.y.convert(inch))) *
 		radian;
-
 
 	direction = 1;
 
@@ -77,7 +76,8 @@ void AdaptivePurePursuit::loop()
 	// double turnPower = turnController->step(currHeading.convert(degree));
 	//double turnPower = turnController->step(turnControllerPV.convert(degree));
 	double turnPower = turnController->step(0);
-	if (target.t == path->getResolution()) {
+	if (target.t == path->getResolution())
+	{
 		if (angleError * 180.0 / PI > 90)
 		{
 			//bearing = (bearing.convert(degree) - 180) * degree;
@@ -98,13 +98,20 @@ void AdaptivePurePursuit::loop()
 	chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
 }
 
-path::Point AdaptivePurePursuit::getPointTarget() {
+path::Point AdaptivePurePursuit::getPointTarget()
+{
 	return target;
 }
 
-bool AdaptivePurePursuit::isSettled() {
+bool AdaptivePurePursuit::isSettled()
+{
 	path::Point endPoint = path->pointAt(path->getResolution());
 	double distance = sqrt(pow(endPoint.x.convert(inch) - odometry::currX.convert(inch), 2) + pow(endPoint.y.convert(inch) - odometry::currY.convert(inch), 2));
 	return (distance < 3);
+}
+
+void AdaptivePurePursuit::setKf(double kf)
+{
+	this->lookaheadKf = kf;
 }
 } // namespace pathfollowing

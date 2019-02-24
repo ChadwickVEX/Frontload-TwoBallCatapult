@@ -7,8 +7,7 @@ ChassisControllerIntegrated chassis = ChassisControllerFactory::create( // chass
     {LEFT_BACK, LEFT_FRONT},
     {-RIGHT_BACK, -RIGHT_FRONT},
     AbstractMotor::gearset::green,
-    {4.125_in, 11.55_in}
-);
+    {4.125_in, 11.55_in});
 
 // use for straight drives to correct for anomalies better than motion profiles will
 // std::shared_ptr<ChassisControllerPID> chassisPID = std::make_shared<ChassisControllerPID>(
@@ -18,7 +17,7 @@ ChassisControllerIntegrated chassis = ChassisControllerFactory::create( // chass
 //     std::make_unique<IterativePosPIDController>(0.0, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()), // angle persist
 //     std::make_unique<IterativePosPIDController>(0.0, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()), // turn
 //     AbstractMotor::gearset::green,
-//     chassis.getChassisScales() 
+//     chassis.getChassisScales()
 // );
 // TODO implement summing integral over a window
 // REMEMBER TO chassisPID.startThread()
@@ -28,16 +27,20 @@ CustomAMPController motionProfile(
     1.09, 4.0, 10.0, // maxvel, accel, max jerk
     chassis.getChassisModel(),
     chassis.getChassisScales(),
-    AbstractMotor::gearset::green
-);
+    AbstractMotor::gearset::green);
 
- 
+pathfollowing::AdaptivePurePursuit appController(
+    std::make_unique<IterativePosPIDController>(0.2, 0.0, 60.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+    std::make_unique<IterativePosPIDController>(0.6, 0.0, 20.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+    10, 10.0);
+
 Motor mtrRB(RIGHT_BACK, true, AbstractMotor::gearset::green);
 Motor mtrLB(LEFT_BACK);
 Motor mtrRF(RIGHT_FRONT, true, AbstractMotor::gearset::green);
 Motor mtrLF(LEFT_FRONT);
 
-void setAllMotorsBrakeMode(AbstractMotor::brakeMode mode) {
+void setAllMotorsBrakeMode(AbstractMotor::brakeMode mode)
+{
     mtrRB.setBrakeMode(mode);
     mtrLB.setBrakeMode(mode);
     mtrRF.setBrakeMode(mode);

@@ -5,21 +5,24 @@
 #include <tuple>
 #include "config.hpp"
 
-namespace odometry {
-    using namespace okapi;
+namespace odometry
+{
+using namespace okapi;
 
-    extern QLength currX;
-    extern QLength currY;
-    extern QAngle currAngle;
+extern QLength currX;
+extern QLength currY;
+extern QAngle currAngle;
 
-    void init();
+void init();
 
-    void calculate();
+void calculate();
 
-    QLength distanceToPoint(QLength x, QLength y);
-    QAngle angleToPoint(QLength x, QLength y);
+QLength distanceToPoint(QLength x, QLength y);
+QAngle angleToPoint(QLength x, QLength y);
 
-    std::tuple<QLength, QAngle> distanceAndAngleToPoint(QLength x, QLength y);
+std::tuple<QLength, QAngle> distanceAndAngleToPoint(QLength x, QLength y);
 
-    void run(void *p);
-}
+void run(void *p);
+
+void turn(QAngle angle);
+} // namespace odometry
