@@ -7,7 +7,7 @@ ChassisControllerIntegrated chassis = ChassisControllerFactory::create( // chass
     {LEFT_BACK, LEFT_FRONT},
     {-RIGHT_BACK, -RIGHT_FRONT},
     AbstractMotor::gearset::green,
-    {4.125_in, 11.55_in});
+    {4.125_in, 11.25_in});
 
 // use for straight drives to correct for anomalies better than motion profiles will
 // std::shared_ptr<ChassisControllerPID> chassisPID = std::make_shared<ChassisControllerPID>(
@@ -30,9 +30,9 @@ CustomAMPController motionProfile(
     AbstractMotor::gearset::green);
 
 pathfollowing::AdaptivePurePursuit appController(
-    std::make_unique<IterativePosPIDController>(0.2, 0.0, 60.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+    std::make_unique<IterativePosPIDController>(0.2, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
     std::make_unique<IterativePosPIDController>(0.6, 0.0, 20.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-    10, 10.0);
+    200, 10.0);
 
 Motor mtrRB(RIGHT_BACK, true, AbstractMotor::gearset::green);
 Motor mtrLB(LEFT_BACK);

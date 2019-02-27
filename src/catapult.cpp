@@ -133,10 +133,12 @@ namespace catapult {
                     while (catapultLimit.get_value() < LIMIT_THRESH) {
                         catapult.moveVoltage(12000);
                         descorer::changeState(2);
+                        descorer::move();
                         pros::delay(10);
                     }
-                    pros::delay(600);
+                    descorer::waitUntilSettled(); // waited 600 ms
                     descorer::changeState(1);
+                    descorer::move();
                     break;
                 case movingBall:
                     if (lastState == lowering) {
@@ -179,7 +181,7 @@ namespace catapult {
             //logger->info("catapult limit: " + std::to_string(catapultLimit.get_value()));
             //std::string stte = getStateString();
             //printf(stte.c_str());
-            printf("Catapult Limit: %d", catapultLimit.get_value());
+            //printf("Catapult Limit: %d", catapultLimit.get_value());
         }
     }
 

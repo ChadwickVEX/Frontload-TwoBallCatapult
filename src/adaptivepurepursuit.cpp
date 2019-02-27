@@ -69,6 +69,22 @@ void AdaptivePurePursuit::loop()
 	double angleError = bearing.convert(radian) - currBearingAngle.convert(radian);
 	angleError = std::atan2(sin(angleError), cos(angleError));
 
+	//if (target.t == path->getResolution())
+	//{
+	if (angleError * 180.0 / PI > 90)
+	{
+		angleError -= PI;
+		// angleError *= -1;
+		direction *= -1;
+	}
+	else if (angleError * 180.0 / PI < -90)
+	{
+		angleError += PI;
+		// angleError *= -1;
+		direction *= -1;
+	}
+	//}
+
 	//turnController->setTarget(bearing.convert(degree));
 	turnController->setTarget(angleError);
 
@@ -76,28 +92,15 @@ void AdaptivePurePursuit::loop()
 	// double turnPower = turnController->step(currHeading.convert(degree));
 	//double turnPower = turnController->step(turnControllerPV.convert(degree));
 	double turnPower = turnController->step(0);
-	if (target.t == path->getResolution())
-	{
-		if (angleError * 180.0 / PI > 90)
-		{
-			//bearing = (bearing.convert(degree) - 180) * degree;
-			direction *= -1;
-		}
-		else if (angleError * 180.0 / PI < -90)
-		{
-			//bearing = (bearing.convert(degree) + 180) * degree;
-			direction *= -1;
-		}
-	}
 
 	//printf("Bearing: %f, ", bearing.convert(degree));
 	//printf("angleError: %f, ", (angleError * 180.0/PI));
 	//printf("Forward: %f, Turn: %f, ", forwardPower, turnPower);
 	//printf("Angle: %1.2f\n", currBearingAngle.convert(degree));
 
+
 	chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
 }
-
 path::Point AdaptivePurePursuit::getPointTarget()
 {
 	return target;

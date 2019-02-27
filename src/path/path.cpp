@@ -5,6 +5,8 @@ namespace path
 {
 Path::Path(int resolution, int lookahead) : currT(0), resolution(resolution), lookAhead(lookahead) {}
 
+Point::Point(okapi::QLength x, okapi::QLength y) : x(x), y(y) {}
+
 Point Path::nextPoint(int lookahead)
 {
     if (currT + lookahead > resolution)

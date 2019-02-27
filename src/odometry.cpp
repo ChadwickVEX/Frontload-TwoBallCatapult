@@ -8,12 +8,14 @@ ADIEncoder leftEnc(LEFT_ENC.front(), LEFT_ENC.back());
 double rEncLast;
 double lEncLast;
 
-const double CHASSISWIDTH = 6.42;
+const double CHASSISWIDTH = 5; // was 6.42
 const double TICKSINCH = ENC_WHEEL * PI / 360.0;
 
 QLength currX;
 QLength currY;
 QAngle currAngle;
+
+bool appOn;
 
 void init()
 {
@@ -23,6 +25,8 @@ void init()
 
     rEncLast = rightEnc.get() * TICKSINCH;
     lEncLast = leftEnc.get() * TICKSINCH;
+
+    appOn = false;
 }
 
 /**
@@ -36,8 +40,8 @@ void calculate()
     double dY = 0.0;
     double dTheta = 0.0;
 
-    double rCurrEnc = rightEnc.get() * ENC_WHEEL * PI / 360.0;
-    double lCurrEnc = leftEnc.get() * ENC_WHEEL * PI / 360.0;
+    double rCurrEnc = rightEnc.get() * TICKSINCH;
+    double lCurrEnc = leftEnc.get() * TICKSINCH;
 
     double rDEnc = rCurrEnc - rEncLast;
     double lDEnc = lCurrEnc - lEncLast;
@@ -92,11 +96,14 @@ void printPosition(void *p)
         double y = currY.convert(okapi::foot);
         double left = leftEnc.get();
         double right = rightEnc.get();
-        controller.print(0, 0, "X: %.2f", x);
-        //controller.print(0, 0, "L: %.2f", left);
+        double angle = currAngle.convert(degree);
+        //controller.print(0, 0, "X: %.2f", x);
+        controller.print(0, 0, "L: %.2f", left);
         pros::delay(51);
-        controller.print(1, 0, "Y: %.2f", y);
-        //controller.print(1, 0, "R: %.2f", right);
+        //controller.print(1, 0, "Y: %.2f", y);
+        controller.print(1, 0, "R: %.2f", right);
+        pros::delay(51);
+        controller.print(2, 0, "A: %1.2f", angle);
         pros::delay(51);
     }
 }
@@ -107,22 +114,24 @@ void run(void *p)
     while (true)
     {
         calculate();
-        pros::delay(2);
+        pros::delay(5);
     }
 }
 
 void turnAbsolute(QAngle target)
 {
 
-    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(1.0, 0.0, 0.0, 0, std::make_unique<okapi::AverageFilter<5>>());
+    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.8, 0.0, 1000.0, 0, std::make_unique<okapi::AverageFilter<5>>());
 
     double angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
     angleError = atan2(sin(angleError), cos(angleError));
     tc.setTarget(angleError);
-    okapi::SettledUtil su = okapi::SettledUtilFactory::create(2, 0.8, 100_ms); // target Error, target derivative, settle time
+    okapi::SettledUtil su = okapi::SettledUtilFactory::create(1, 0.8, 100_ms); // target Error, target derivative, settle time
 
     while (!su.isSettled(angleError * 180.0 / PI))
     {
+        angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
+        angleError = atan2(sin(angleError), cos(angleError));
         tc.setTarget(angleError);
         double power = tc.step(0);
         if (abs(power) < 0.01)
@@ -133,6 +142,7 @@ void turnAbsolute(QAngle target)
         {
             chassis.rotate(power);
         }
+        pros::delay(10);
     }
 
     chassis.stop();
@@ -141,5 +151,26 @@ void turnAbsolute(QAngle target)
 void turnRelative(QAngle target)
 {
     turnAbsolute((currAngle.convert(okapi::degree) + target.convert(okapi::degree)) * okapi::degree);
+}
+
+void driveApp() {
+    appOn = true;
+}
+
+void waitUntilSettled() {
+    while (!appController.isSettled()) {
+        pros::delay(40);
+    }
+    appOn = false;
+    chassis.stop();
+}
+
+void runApp(void* p) {
+    while (true) {
+        if (appOn) {
+            appController.loop();
+        }
+        pros::delay(10);
+    }
 }
 } // namespace odometry

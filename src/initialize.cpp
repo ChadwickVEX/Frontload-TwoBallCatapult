@@ -31,8 +31,10 @@ void initialize() {
 
 	odometry::init();
 
+    pros::Task odometryTask(odometry::run, nullptr, TASK_PRIORITY_DEFAULT + 1, TASK_STACK_DEPTH_DEFAULT, "Odometry");
+    pros::Task appTask(odometry::runApp, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Adaptive Pure Pursuit");
+
 	pros::Task catapultTask(catapult::move, (void*)1, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Catapult Move");
-	pros::Task odometryTask(odometry::run, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Odometry");
 	pros::Task pathTask(lcd::generatePaths, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Path Generation");
 
 	//pros::lcd::initialize();

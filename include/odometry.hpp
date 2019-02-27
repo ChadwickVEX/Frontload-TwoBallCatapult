@@ -24,5 +24,14 @@ std::tuple<QLength, QAngle> distanceAndAngleToPoint(QLength x, QLength y);
 
 void run(void *p);
 
-void turn(QAngle angle);
+void turnAbsolute(QAngle angle);
+
+void turnRelative(QAngle angle);
+
+void driveApp();
+
+void waitUntilSettled();
+
+void runApp(void *p);
+
 } // namespace odometry

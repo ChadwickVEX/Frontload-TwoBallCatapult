@@ -14,19 +14,55 @@
 void autonomous()
 {
 
-    setAllMotorsBrakeMode(AbstractMotor::brakeMode::brake);
+    setAllMotorsBrakeMode(AbstractMotor::brakeMode::hold);
     //blueCloseAuto();
-    lcd::runAuton();
 
-    // motionProfile.generatePath(
-    //     {
-    //         {odometry::currX, odometry::currY, odometry::currAngle},
-    //         {24_in, 12_in, 0_deg}
-    //     },
-    //     "Test Path"
+    //odometry::turnAbsolute(90_deg);
+
+    path::Bezier boi(
+        {
+            path::Point{0_in, 0_in},
+            path::Point{0_in, 1.5_ft},
+            path::Point{0_in, 3_ft}
+        },
+        200,
+        200
+    );
+
+    appController.setPath(&boi);
+    odometry::driveApp();
+    odometry::waitUntilSettled();
+    pros::delay(200);
+
+    // intake::forwardSpin();
+
+    // path::Line forwardToBall(
+    //     {0_in, 0_in},
+    //     {0_in, 3_ft},
+    //     200,
+    //     200
     // );
 
-    // motionProfile.setTarget("Test Path");
+    // appController.setPath(&forwardToBall);
+
+    // odometry::driveApp();
+
+    // odometry::waitUntilSettled();
+    // pros::delay(200);
+
+    // path::Line backwardFromBall(
+    //     {0_in, 3_ft},
+    //     {0_in, 0_in},
+    //     200,
+    //     200
+    // );
+
+    // appController.setPath(&backwardFromBall);
+
+    // odometry::driveApp();
+    // odometry::waitUntilSettled();
+
+    //lcd::runAuton();
 }
 
 void appcSquare()
