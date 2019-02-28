@@ -42,7 +42,7 @@ void initialize() {
 	//pros::lcd::print(0, "Running init");
 
 	catapult::tare(); // tare catapult at 0 pos being fired position
-	descorer::init();
+	//descorer::init();
 	// pros::lcd::register_btn1_cb(lcd::pickMiddle); // TODO use PROS callbacks instead of my own polling
 	// pros::lcd::register_btn0_cb(lcd::pickLeft);
 	// pros::lcd::register_btn2_cb(lcd::pickRight);

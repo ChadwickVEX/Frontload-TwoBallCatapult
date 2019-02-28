@@ -10,7 +10,8 @@ struct Point
     okapi::QLength x;
     okapi::QLength y;
     int t = 0;
-    Point(okapi::QLength x, okapi::QLength y);
+    Point();
+    Point(okapi::QLength x, okapi::QLength y, int t = 0);
 };
 
 struct PointAndDistance

@@ -99,6 +99,10 @@ namespace catapult {
         }
     }
 
+    void shoot() {
+        changeState(shooting);
+    }
+
     void prepareLoad() {
         catapult1.setBrakeMode(AbstractMotor::brakeMode::hold);
         catapult2.setBrakeMode(AbstractMotor::brakeMode::hold);

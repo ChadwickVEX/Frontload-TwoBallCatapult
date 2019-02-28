@@ -15,24 +15,45 @@ void autonomous()
 {
 
     setAllMotorsBrakeMode(AbstractMotor::brakeMode::hold);
-    //blueCloseAuto();
+    
+    blueCloseAuto();
+    //lcd::runAuton();
 
-    //odometry::turnAbsolute(90_deg);
 
-    path::Bezier boi(
-        {
-            path::Point{0_in, 0_in},
-            path::Point{0_in, 1.5_ft},
-            path::Point{0_in, 3_ft}
-        },
-        200,
-        200
-    );
+    // odometry::turnAbsolute(90_deg);
 
-    appController.setPath(&boi);
-    odometry::driveApp();
-    odometry::waitUntilSettled();
-    pros::delay(200);
+    // path::Bezier boi(
+    //     {
+    //         path::Point{0_in, 0_in},
+    //         path::Point{0_in, 2_ft},
+    //         path::Point{2_ft, 2_ft},
+    //         path::Point{2_ft, 6_ft}
+    //     },
+    //     200,
+    //     200
+    // );
+
+    // appController.setPath(&boi);
+    // odometry::driveApp();
+    // odometry::waitUntilSettled();
+    // pros::delay(800);
+
+    // path::Bezier bababoi(
+    //     {
+    //         path::Point{2_in, 6_in},
+    //         path::Point{2_in, 2_ft},
+    //         path::Point{0_ft, 2_ft},
+    //         path::Point{0_ft, 0_ft}
+    //     },
+    //     200,
+    //     200
+    // );
+
+    // appController.setPath(&bababoi);
+    // odometry::driveApp();
+    // odometry::waitUntilSettled();
+    // pros::delay(200);
+
 
     // intake::forwardSpin();
 
@@ -62,7 +83,6 @@ void autonomous()
     // odometry::driveApp();
     // odometry::waitUntilSettled();
 
-    //lcd::runAuton();
 }
 
 void appcSquare()

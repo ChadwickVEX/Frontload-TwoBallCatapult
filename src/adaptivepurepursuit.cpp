@@ -110,7 +110,7 @@ bool AdaptivePurePursuit::isSettled()
 {
 	path::Point endPoint = path->pointAt(path->getResolution());
 	double distance = sqrt(pow(endPoint.x.convert(inch) - odometry::currX.convert(inch), 2) + pow(endPoint.y.convert(inch) - odometry::currY.convert(inch), 2));
-	return (distance < 3);
+	return (distance < 2);
 }
 
 void AdaptivePurePursuit::setKf(double kf)

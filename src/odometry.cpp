@@ -97,11 +97,11 @@ void printPosition(void *p)
         double left = leftEnc.get();
         double right = rightEnc.get();
         double angle = currAngle.convert(degree);
-        //controller.print(0, 0, "X: %.2f", x);
-        controller.print(0, 0, "L: %.2f", left);
+        controller.print(0, 0, "X: %.2f", x);
+        //controller.print(0, 0, "L: %.2f", left);
         pros::delay(51);
-        //controller.print(1, 0, "Y: %.2f", y);
-        controller.print(1, 0, "R: %.2f", right);
+        controller.print(1, 0, "Y: %.2f", y);
+        //controller.print(1, 0, "R: %.2f", right);
         pros::delay(51);
         controller.print(2, 0, "A: %1.2f", angle);
         pros::delay(51);
@@ -121,12 +121,12 @@ void run(void *p)
 void turnAbsolute(QAngle target)
 {
 
-    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.8, 0.0, 1000.0, 0, std::make_unique<okapi::AverageFilter<5>>());
+    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.5, 0.0, 10000.0, 0/*, std::make_unique<okapi::AverageFilter<5>>()*/);
 
     double angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
     angleError = atan2(sin(angleError), cos(angleError));
     tc.setTarget(angleError);
-    okapi::SettledUtil su = okapi::SettledUtilFactory::create(1, 0.8, 100_ms); // target Error, target derivative, settle time
+    okapi::SettledUtil su = okapi::SettledUtilFactory::create(1.5, 0.5, 100_ms); // target Error, target derivative, settle time
 
     while (!su.isSettled(angleError * 180.0 / PI))
     {
@@ -134,7 +134,7 @@ void turnAbsolute(QAngle target)
         angleError = atan2(sin(angleError), cos(angleError));
         tc.setTarget(angleError);
         double power = tc.step(0);
-        if (abs(power) < 0.01)
+        if (abs(power) < 0.001)
         {
             chassis.stop();
         }

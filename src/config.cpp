@@ -30,9 +30,9 @@ CustomAMPController motionProfile(
     AbstractMotor::gearset::green);
 
 pathfollowing::AdaptivePurePursuit appController(
-    std::make_unique<IterativePosPIDController>(0.2, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-    std::make_unique<IterativePosPIDController>(0.6, 0.0, 20.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-    200, 10.0);
+    std::make_unique<IterativePosPIDController>(0.08, 0.0, 1.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+    std::make_unique<IterativePosPIDController>(0.5, 0.05, 10.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+    200, 10.0); // turn was 0.6
 
 Motor mtrRB(RIGHT_BACK, true, AbstractMotor::gearset::green);
 Motor mtrLB(LEFT_BACK);

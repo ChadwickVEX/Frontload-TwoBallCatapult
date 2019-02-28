@@ -32,7 +32,7 @@ std::vector<int> getPascalCoeff(int rowIndex)
     return row;
 }
 
-int factorial(int n)
+int Bezier::factorial(int n)
 {
     if (n == 0 || n == 1)
     {
