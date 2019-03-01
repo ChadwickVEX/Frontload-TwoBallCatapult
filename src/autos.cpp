@@ -3,6 +3,7 @@
 
 //blueclose
 void blueClosePaths() {
+    
 }
 
 // auton for blue side closer to flags
@@ -50,12 +51,15 @@ void blueCloseAuto() {
     // motionProfile.waitUntilPathComplete();
 
     pros::delay(400);
+
+    appController.setStraightGains(0.075, 0.0, 10);
+
     path::Bezier toFlag(
         {
             path::Point{-4_in, -1_in},
             path::Point{10_in, -1_in},
-            path::Point{0_ft, -4_in},
-            path::Point{40_in, -4_in}
+            path::Point{0_ft, -2_in},
+            path::Point{39_in, -2_in}
         },
         200,
         200
@@ -65,45 +69,71 @@ void blueCloseAuto() {
     odometry::waitUntilSettled();
 
     descorer::moveTarget(50);
-
-    // path::Line prePreScrape(
-    //     {2_ft, -4_in},
-    //     {0.5_ft, 0.5_ft},
-    //     200,
-    //     200
-    // );
     path::Bezier prePreScrape(
         {
-            path::Point{2_ft, -4_in},
-            path::Point{1_ft, -4_in},
-            path::Point{1_ft, 0.5_ft},
-            path::Point{0.5_ft, 0.5_ft}
+            path::Point{3.4_ft, -2_in},
+            path::Point{1.5_ft, -2_in},
+            path::Point{2_ft, -0.5_ft},
+            path::Point{0.5_ft, -0.5_ft}
         },
         200,
         200
     );
     appController.setPath(&prePreScrape);
     odometry::driveApp();
+    motionProfile.generatePath(
+        {
+            {0_in, 0_in, 0_deg},
+            {1.15_ft, 0_ft, 0_deg}
+        },
+        "Go to cap"
+    );
+
     odometry::waitUntilSettled();
     odometry::turnAbsolute(45_deg);
 
-    chassis.setMaxVelocity(70);
-    chassis.moveDistanceAsync(1.8_ft); // drive to the cap
-    pros::delay(400);
+
+    motionProfile.setTarget("Go to cap");
     descorer::moveTarget(185, 20);
-    chassis.waitUntilSettled();
+    motionProfile.generatePath(
+        {
+            {0_in, 0_in, 0_deg},
+            {0.5_ft, 0_ft, 0_deg}
+        },
+        "From Cap"
+    );
+
+    motionProfile.waitUntilSettled();
+    descorer::waitUntilSettled();
+    motionProfile.removePath("Go to cap");
+
+    motionProfile.reverse();
+    motionProfile.setTarget("From Cap");
     intake::forwardSpin(); // intake forward to intake
-    chassis.setMaxVelocity(100);
-    chassis.moveDistance(-1_ft);
+
+    motionProfile.waitUntilSettled();
     descorer::moveTarget(150);
-    chassis.moveDistance(-0.5_ft);
-    descorer::moveTarget(210);
-    pros::delay(700);
-    chassis.setMaxVelocity(100);
-    chassis.moveDistance(1.25_ft);
-    chassis.setMaxVelocity(100);
-    chassis.moveDistance(-0.25_ft);
+    pros::delay(200);
+    motionProfile.reverse();
+    motionProfile.setTarget("From Cap");
+    motionProfile.generatePath(
+        {
+            {0_in, 0_in, 0_deg},
+            {0.75_ft, 0_ft, 0_deg}
+        },
+        "Go to Cap Again"
+    );
+    motionProfile.waitUntilSettled();
+    motionProfile.removePath("From Cap");
+    descorer::moveTarget(220);
+    pros::delay(500);
+    motionProfile.setTarget("Go to Cap Again");
+    motionProfile.waitUntilSettled();
+    
+    descorer::moveTarget(50);
     odometry::turnAbsolute(45_deg);
+    motionProfile.removePath("Go to Cap Again");
+    pros::delay(700);
     catapult::shoot();
     pros::delay(500);
     intake::stop();
@@ -111,7 +141,7 @@ void blueCloseAuto() {
     descorer::moveTarget(50);
     path::Line finalBottomFlag(
         {1_ft, 1_ft},
-        {3.75_ft, 3.3_ft},
+        {3.8_ft, 2.9_ft},
         200,
         200
     );
@@ -121,15 +151,6 @@ void blueCloseAuto() {
     odometry::waitUntilSettled();
     descorer::moveTarget(80);
     pros::delay(10000);
-    // path::Line bottomFlag(
-    //     {0_in, -1_in},
-    //     {3_ft, -1_in},
-    //     200,
-    //     200
-    // );
-    //appController.setPath(&bottomFlag);
-    //odometry::driveApp();
-    //odometry::waitUntilSettled();
 }
 
 //bluefar

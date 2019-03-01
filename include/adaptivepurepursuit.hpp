@@ -36,5 +36,9 @@ public:
   bool isSettled();
 
   void setKf(double kf);
+
+  void setStraightGains(double kP = -1, double kI = -1, double kD = -1);
+
+  void setTurnGains(double kP = -1, double kI = -1, double kD = -1);
 };
 } // namespace pathfollowing

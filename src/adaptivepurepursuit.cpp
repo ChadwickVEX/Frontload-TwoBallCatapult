@@ -117,4 +117,12 @@ void AdaptivePurePursuit::setKf(double kf)
 {
 	this->lookaheadKf = kf;
 }
+
+void AdaptivePurePursuit::setStraightGains(double kP, double kI, double kD) {
+	straightController->setGains(kP, kI, kD, 0.0);
+}
+
+void AdaptivePurePursuit::setTurnGains(double kP, double kI, double kD) {
+	turnController->setGains(kP, kI, kD, 0.0);
+}
 } // namespace pathfollowing

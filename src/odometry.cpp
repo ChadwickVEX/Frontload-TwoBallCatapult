@@ -19,6 +19,8 @@ bool appOn;
 
 void init()
 {
+    //rightEnc.reset();
+    //leftEnc.reset();
     currX = 0_ft;
     currY = 0_ft;
     currAngle = 0_deg;
@@ -75,7 +77,9 @@ void calculate()
     currAngle = tempCurrAngle;
 }
 
-QLength distanceToPoint(QLength x, QLength y) {}
+QLength distanceToPoint(QLength x, QLength y) {
+    return (sqrt(pow((currX.convert(inch) - x.convert(inch)), 2) + pow((currY.convert(inch) - y.convert(inch)), 2))) * inch;
+}
 
 QAngle angleToPoint(QLength x, QLength y) {}
 
@@ -103,7 +107,8 @@ void printPosition(void *p)
         controller.print(1, 0, "Y: %.2f", y);
         //controller.print(1, 0, "R: %.2f", right);
         pros::delay(51);
-        controller.print(2, 0, "A: %1.2f", angle);
+        //controller.print(2, 0, "A: %1.2f", angle);
+        controller.print(2, 0, "app: %d", (appOn) ? 1 : 0);
         pros::delay(51);
     }
 }
@@ -121,7 +126,7 @@ void run(void *p)
 void turnAbsolute(QAngle target)
 {
 
-    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.5, 0.0, 10000.0, 0/*, std::make_unique<okapi::AverageFilter<5>>()*/);
+    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.5, 0.0, 1.0, 0/*, std::make_unique<okapi::AverageFilter<5>>()*/);
 
     double angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
     angleError = atan2(sin(angleError), cos(angleError));
@@ -134,7 +139,7 @@ void turnAbsolute(QAngle target)
         angleError = atan2(sin(angleError), cos(angleError));
         tc.setTarget(angleError);
         double power = tc.step(0);
-        if (abs(power) < 0.001)
+        if (abs(power) < 0.01)
         {
             chassis.stop();
         }
@@ -159,6 +164,15 @@ void driveApp() {
 
 void waitUntilSettled() {
     while (!appController.isSettled()) {
+        pros::delay(40);
+    }
+    appOn = false;
+    chassis.stop();
+}
+
+void waitUntilSettled(int timeout) {
+    std::uint32_t startTime = pros::millis();
+    while (!appController.isSettled() || (pros::millis() - startTime) <= timeout) {
         pros::delay(40);
     }
     appOn = false;
