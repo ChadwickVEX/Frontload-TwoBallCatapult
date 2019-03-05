@@ -23,6 +23,8 @@ namespace catapult {
         movingBall,
         unmoving
     } tCatapultState;
+
+    extern tCatapultState currState;
     
     tCatapultState updateState();
     void changeState(tCatapultState state);

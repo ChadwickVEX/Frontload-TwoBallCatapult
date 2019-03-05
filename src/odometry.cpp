@@ -8,7 +8,7 @@ ADIEncoder leftEnc(LEFT_ENC.front(), LEFT_ENC.back());
 double rEncLast;
 double lEncLast;
 
-const double CHASSISWIDTH = 5; // was 6.42
+const double CHASSISWIDTH = 4.736111111; // was 6.42
 const double TICKSINCH = ENC_WHEEL * PI / 360.0;
 
 QLength currX;
@@ -92,6 +92,8 @@ void printPosition(void *p)
 {
     pros::Controller controller(pros::E_CONTROLLER_MASTER);
     controller.clear();
+    int count = 0;
+    int startTime = 0;
     using namespace okapi;
 
     while (true)
@@ -103,12 +105,19 @@ void printPosition(void *p)
         double angle = currAngle.convert(degree);
         controller.print(0, 0, "X: %.2f", x);
         //controller.print(0, 0, "L: %.2f", left);
+        if (pros::competition::is_autonomous() && count < 1 && !pros::competition::is_disabled()) {
+            count++;
+            startTime = pros::millis();
+        } else if (pros::competition::is_autonomous() && !pros::competition::is_disabled()) {
+            double deltaT =  ((double) (pros::millis() - startTime)) / 1000.0;
+            //controller.print(0, 0, "Time: %1.2f", deltaT);
+        }
         pros::delay(51);
         controller.print(1, 0, "Y: %.2f", y);
         //controller.print(1, 0, "R: %.2f", right);
         pros::delay(51);
-        //controller.print(2, 0, "A: %1.2f", angle);
-        controller.print(2, 0, "app: %d", (appOn) ? 1 : 0);
+        controller.print(2, 0, "A: %1.2f", angle);
+        //controller.print(2, 0, "app: %d", (appOn) ? 1 : 0);
         pros::delay(51);
     }
 }
@@ -125,32 +134,51 @@ void run(void *p)
 
 void turnAbsolute(QAngle target)
 {
-
-    okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.5, 0.0, 1.0, 0/*, std::make_unique<okapi::AverageFilter<5>>()*/);
-
     double angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
     angleError = atan2(sin(angleError), cos(angleError));
-    tc.setTarget(angleError);
-    okapi::SettledUtil su = okapi::SettledUtilFactory::create(1.5, 0.5, 100_ms); // target Error, target derivative, settle time
 
-    while (!su.isSettled(angleError * 180.0 / PI))
-    {
-        angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
-        angleError = atan2(sin(angleError), cos(angleError));
-        tc.setTarget(angleError);
-        double power = tc.step(0);
-        if (abs(power) < 0.01)
-        {
-            chassis.stop();
-        }
-        else
-        {
-            chassis.rotate(power);
-        }
-        pros::delay(10);
-    }
+    // pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-    chassis.stop();
+    // pros::delay(51);
+    // controller.print(1, 0, "AE: %1.2f", angleError * 180.0/PI);
+    // pros::delay(51);
+    // controller.print(2, 0, "A: %1.2f", currAngle.convert(degree));
+    // pros::delay(51);
+    QAngle targetAng = (angleError * 180.0 / PI) * degree;
+    // controller.print(0, 0, "AE2: %1.2f", targetAng.convert(degree));
+
+    chassis.turnAngle(targetAng);
+
+    // okapi::IterativePosPIDController tc = okapi::IterativeControllerFactory::posPID(0.41, 0.01, 0.01, 0, std::make_unique<AverageFilter<3>>());
+
+    // double angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
+    // angleError = atan2(sin(angleError), cos(angleError));
+    // tc.setTarget(angleError);
+    // okapi::SettledUtil su = okapi::SettledUtilFactory::create(1, 0.2, 100_ms); // target Error, target derivative, settle time
+    // bool disabled = false;
+
+    // while (!su.isSettled(angleError * 180.0 / PI))
+    // {
+    //     angleError = target.convert(okapi::radian) - currAngle.convert(okapi::radian);
+    //     angleError = atan2(sin(angleError), cos(angleError));
+    //     tc.setTarget(0);
+    //     double power = tc.step(-angleError);
+    //     if (abs(power) < 0.5 && abs(angleError * 180.0/PI) < 0.4)
+    //     {
+    //         //chassis.stop();
+    //         disabled = true;
+    //         //chassis.rotate(power);
+    //     }
+    //     else
+    //     {
+    //         chassis.rotate(power);
+    //     }
+    //     pros::delay(10);      
+    //     if (disabled) {
+    //         break;
+    //     }
+    // }
+    // chassis.stop();
 }
 
 void turnRelative(QAngle target)

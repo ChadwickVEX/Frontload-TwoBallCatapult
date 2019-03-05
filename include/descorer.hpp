@@ -5,6 +5,7 @@
 
 namespace descorer {
     extern okapi::Motor descorer;
+    extern bool isCalibrating;
 
     void init();
 
@@ -21,6 +22,8 @@ namespace descorer {
     void moveTarget(int target, int speed);
 
     void waitUntilSettled();
+
+    void calibrate(void* p);
 }
 
 #endif // _DESCORER_HPP_

@@ -19,4 +19,6 @@ void redFarAutoParkOnly();
 
 void redFarPaths();
 
+void skills();
+
 #endif

@@ -140,6 +140,7 @@ namespace catapult {
                         descorer::move();
                         pros::delay(10);
                     }
+                    pros::delay(200);
                     descorer::waitUntilSettled(); // waited 600 ms
                     descorer::changeState(1);
                     descorer::move();

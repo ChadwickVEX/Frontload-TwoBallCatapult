@@ -15,12 +15,45 @@ void autonomous()
 {
 
     setAllMotorsBrakeMode(AbstractMotor::brakeMode::hold);
-    
-    blueCloseAuto();
+
+
+    //skills();
+    //redCloseAuto();
     //lcd::runAuton();
+    skills();
+
+    //chassis.setMaxVelocity(100);
+    //chassis.moveDistance(4_ft); // use to test encoders
+    //chassis.moveDistance(-4_ft);
+    //chassis.moveDistance(4_ft);
+    //chassis.moveDistance(-4_ft); // expected: 2000 ticks both directions
+
+    //chassis.turnAngle(90_deg);
+    //odometry::currAngle = 30_deg;
+    //odometry::turnAbsolute(90_deg);
+    //chassis.turnAngle(62.4_deg);
+
+    // odometry::currX = 3.8_ft;
+    // odometry::currY = 2.9_ft;
+
+    // path::Bezier theFinalCap(
+    //     {
+    //         path::Point{3.8_ft, 2.9_ft},
+    //         path::Point{1.3_ft, 1.3_ft},
+    //         path::Point{2_ft, -3_ft},
+    //         path::Point{2_ft, 6.5_ft},
+    //         path::Point{2_ft, 6_ft}
+    //     },
+    //     400,
+    //     100
+    // );
+
+    // appController.setPath(&theFinalCap);
+    // odometry::driveApp();
+    // odometry::waitUntilSettled();
 
 
-    // odometry::turnAbsolute(90_deg);
+    // appController.setStraightGains(0.07, 0.0, 1.0);
 
     // path::Bezier boi(
     //     {

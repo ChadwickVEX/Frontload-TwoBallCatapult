@@ -1,14 +1,17 @@
 #include "main.h"
 
-PID::PID(double kP, double kI, double kD, int target)
-{
-    this->kP = kP;
-    this->kI = kI;
-    this->kD = kD;
-    lastTime = pros::millis();
-    this->target = target;
-    error = target;
-} // todo make second constructor to use legacy sensors
+PID::PID(double kP, double kI, double kD, int target) : kP(kP), kI(kI), kD(kD), oldTime(pros::millis()), desiredValue(target), error(target)
+{}
+
+double PID::limit(double val, double min = -1.0, double max = 1){//caps a value
+	if(val>max){
+		return max;
+	}
+	if(val<min){
+		return min;
+	}
+	return val;
+}
 
 /**
  * Next PID step.
@@ -16,30 +19,60 @@ PID::PID(double kP, double kI, double kD, int target)
  */
 double PID::next(int reading)
 {
-    dT = pros::millis() - lastTime;
-    double speed = 0.0;
+    //calculate delta time since last call
+    this->timeChange = pros::millis()-this->oldTime;
+    this->oldTime = pros::millis();
+    if(this->timeChange>100||this->timeChange == 0){
+        this->timeChange = 50;
+    }
+    //calculate error
+    this->error = this->desiredValue-(this->reverseSensor?-1:1)*reading;
+    //set P value
+    this->pVal = this->error;
 
-    lastError = error;
-    error = target - reading;
-    double derivative = (double)error / ((double)dT);
-    double integral = 0;
+    //subtract oldest value from I
+    this->iVal -= this->oldErrorArr[this->writeCounterI];
 
-    // todo implement all of pid lul
-    // note sum integral for only last x errors
-    // --> average derivative within a window
+    //add newest value to I
+    if(fabs(this->error)<this->maxErrorI){
+        this->iVal += this->error*this->timeChange;
+        this->oldErrorArr[this->writeCounterI] = this->error*this->timeChange;
+    }
 
-    speed = (error * kP) + (derivative * kD) + (integral * kI);
+    //calculate derivative
+    this->dVal = this->oldSensorValue-(this->reverseSensor?-1:1)*reading;
+    //avoid stupid errors when changing setpoint
+    if(fabs(this->dVal)>1000){
+        this->dVal = 0;
+    }
+    this->dAverage+=this->dVal;
+    this->dAverage-=this->oldDerivatives[this->writeCounterD];
+    this->oldDerivatives[this->writeCounterD] = this->dVal;
 
-    if (speed < -1)
-        speed = -1.0;
-    if (speed > 1)
-        speed = 1.0;
+    //set oldSensorValue
+    this->oldSensorValue = (this->reverseSensor?-1:1)*reading;
 
-    lastTime += dT;
-    return speed;
+    //increment writeCounterD in circular array
+    this->writeCounterD++;
+    this->writeCounterD %= (sizeof(this->oldDerivatives)/sizeof(this->oldDerivatives[0]));
+
+    //set I to 0 if within acceptable range
+    if(fabs(this->error)<this->acceptableRange){
+        this->oldErrorArr = {0};
+        this->iVal = 0;
+    }
+
+    //set old error in circular array
+    this->writeCounterI++;
+    this->writeCounterI %= (sizeof(this->oldErrorArr)/sizeof(this->oldErrorArr[0]));
+
+    //return motor Value
+    return this->pVal*this->kP +
+    limit(this->iVal*this->kI,-50,50) +
+    this->dAverage*this->kD/sizeof(this->oldDerivatives)/sizeof(this->oldDerivatives[0])/(float)this->timeChange;
 }
 
 void PID::changeTarget(int target)
 {
-    this->target = target;
+    this->desiredValue = target;
 }

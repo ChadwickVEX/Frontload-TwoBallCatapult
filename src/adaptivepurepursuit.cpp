@@ -50,9 +50,9 @@ void AdaptivePurePursuit::loop()
 	double distTolookaheadPoint =
 		sqrt(pow(target.x.convert(inch) - robotPosition.x.convert(inch), 2) + pow(target.y.convert(inch) - robotPosition.y.convert(inch), 2));
 
-	straightController->setTarget(distTolookaheadPoint);
+	straightController->setTarget(0);
 
-	double forwardPower = straightController->step(0);
+	double forwardPower = straightController->step(-distTolookaheadPoint);
 	// QAngle bearing =
 	// 	std::atan2((this->target.x.convert(inch) - robotPosition.x.convert(inch)),
 	// 			   (this->target.y.convert(inch) - robotPosition.y.convert(inch))) *
@@ -86,12 +86,12 @@ void AdaptivePurePursuit::loop()
 	//}
 
 	//turnController->setTarget(bearing.convert(degree));
-	turnController->setTarget(angleError);
+	turnController->setTarget(0);
 
 	// double turnPower = turnController->step(odometry::currAngle.convert(degree));
 	// double turnPower = turnController->step(currHeading.convert(degree));
 	//double turnPower = turnController->step(turnControllerPV.convert(degree));
-	double turnPower = turnController->step(0);
+	double turnPower = turnController->step(-angleError);
 
 	//printf("Bearing: %f, ", bearing.convert(degree));
 	//printf("angleError: %f, ", (angleError * 180.0/PI));

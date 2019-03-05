@@ -111,11 +111,11 @@ void generatePaths(void *param)
         }
         pros::delay(20);
 
-        if (pros::competition::is_autonomous() || !pros::competition::is_disabled())
+        if (pros::competition::is_autonomous() && !pros::competition::is_disabled())
         { // changed from && to || untested
-            lv_obj_clean(lv_scr_act());
-            pros::Task dataTask(updateData, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Position Data");
-            pros::c::task_delete(NULL);
+            //lv_obj_clean(lv_scr_act());
+            //pros::Task dataTask(updateData, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Position Data");
+            //pros::c::task_delete(NULL);
         }
     }
 }
